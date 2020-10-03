@@ -34,7 +34,7 @@ urlpatterns = [
 
 
 urlpatterns += [
-    path('catalog/', include('catalog.urls')),
+    path('', include('catalog.urls')),
 ]
 
 
@@ -46,11 +46,11 @@ from django.conf.urls.static import static
 urlpatterns+= static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-#Add URL maps to redirect the base URL to our application
-from django.views.generic import RedirectView
-urlpatterns += [
-    path('', RedirectView.as_view(url='/catalog/', permanent=True)),
-]
+# #Add URL maps to redirect the base URL to our application
+# from django.views.generic import RedirectView
+# urlpatterns += [
+#     path('', RedirectView.as_view(url='/tite/', permanent=True)),
+# ]
 
 
 

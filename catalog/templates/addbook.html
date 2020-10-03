@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-2 text-gray-800">Add Book</h1>
+          <p class="mb-4">Here you can add a new book.</p>
+
+          <!-- DataTales Example -->
+          <form action="/addbook" method="post">
+          {% csrf_token %}
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <!-- <h6 class="m-0 font-weight-bold text-primary"></h6> -->
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Publisher</th>
+                      <th>Year of Publication</th>
+                      <th>ISBN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input name="title"></td>
+                      <td><input name="author"></td>
+                      <td><input name="publisher"></td>
+                      <td><input name="publication_year"></td>
+                      <td><input name="isbn"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        
+          <input class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" type="submit">
+
+          </form>
+
+        </div>
+        <!-- /.container-fluid -->
+
+{% endblock %}
+
+

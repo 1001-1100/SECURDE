@@ -5,36 +5,14 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('books/', views.BookListView.as_view(), name='books'),
-    path('book/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
-    path('authors/', views.AuthorListView.as_view(), name='authors'),
-    path('author/<int:pk>',
-         views.AuthorDetailView.as_view(), name='author-detail'),
-]
-
-
-urlpatterns += [
-    path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
-    path(r'borrowed/', views.LoanedBooksAllListView.as_view(), name='all-borrowed'),  # Added for challenge
-]
-
-
-# Add URLConf for librarian to renew a book.
-urlpatterns += [
-    path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
-]
-
-
-# Add URLConf to create, update, and delete authors
-urlpatterns += [
-    path('author/create/', views.AuthorCreate.as_view(), name='author_create'),
-    path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author_update'),
-    path('author/<int:pk>/delete/', views.AuthorDelete.as_view(), name='author_delete'),
-]
-
-# Add URLConf to create, update, and delete books
-urlpatterns += [
-    path('book/create/', views.BookCreate.as_view(), name='book_create'),
-    path('book/<int:pk>/update/', views.BookUpdate.as_view(), name='book_update'),
-    path('book/<int:pk>/delete/', views.BookDelete.as_view(), name='book_delete'),
+    path('register', views.register, name='register'),
+    path('login', views.login, name='login'),
+    path('books', views.books , name='books'),
+    path('addbook', views.addBook , name='addBook'),
+    path('borrowBook', views.borrowBook, name='borrowBook'),
+    path('addBookReview', views.addBookReview, name='addBookReview'),
+    path('editBook', views.editBook, name='editBook'),
+    path('deleteBook', views.deleteBook, name='deleteBook'),
+    path('createManager', views.createManager, name='createManager'),
+    path('logs', views.logs, name='logs'),
 ]

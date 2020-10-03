@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-2 text-gray-800">Books</h1>
+          <p class="mb-4">Here you can find all the books that can be found in the Xavier Library system.</p>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <!-- <h6 class="m-0 font-weight-bold text-primary"></h6> -->
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Publisher</th>
+                      <th>Year of Publication</th>
+                      <th>ISBN</th>
+                      <th>Status</th>
+                      <th>Reviews</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for book in books %}
+                    <tr>
+                      <td>{{ book.title }}</td>
+                      <td>{{ book.author }}</td>
+                      <td>{{ book.publisher }}</td>
+                      <td>{{ book.publication_year }}</td>
+                      <td>{{ book.isbn }}</td>
+                      {% if book.reserved %}
+                        <td>Reserved</td>
+                      {% else %}
+                        <td>Available</td>
+                      {% endif %}
+                      <td>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Check Reviews</a>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Leave Review</a>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+{% endblock %}
+
+
