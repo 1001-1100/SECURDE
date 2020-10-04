@@ -2,8 +2,8 @@ from django.shortcuts import render
 
 # Create your views here.
 
-from .models import Book 
-
+from .models import Book, User 
+from activity_log.models import ActivityLog 
 
 def index(request):
     """View function for home page of site."""
@@ -19,12 +19,11 @@ def index(request):
     # request.session['num_visits'] = num_visits+1
 
     # Render the HTML template index.html with the data in the context variable.
-    account_type = request.session.get('account_type')
 
     return render(
         request,
         'index.html',
-        context={'account_type':account_type},
+        context={},
     )
 
 def register(request):
@@ -34,6 +33,20 @@ def register(request):
         context={},
     )
 
+def profile(request):
+    if(request.user.is_authenticated):
+        return render(
+            request,
+            'profile.html',
+            context={},
+        )
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
+
 def login(request):
     if(request.method == 'GET'):
         return render(
@@ -41,40 +54,67 @@ def login(request):
             'login.html',
             context={},
         )
-    elif(request.method == 'POST'):
-        pass
 
 def books(request):
-    books = Book.objects.all()
-
-    return render(
+    if(request.user.is_authenticated and (request.user.is_manager or request.user.is_administrator)):
+        return render(
         request,
-        'books.html',
-        context={'books':books},
-    )
+        'denied.html',
+        context={},
+        )
+    else:
+        books = Book.objects.all()
+        return render(
+            request,
+            'books.html',
+            context={'books':books},
+        )
+
+def modifyBook(request):
+    if(request.user.is_authenticated and request.user.is_manager):
+        if(request.method == 'GET'):
+            books = Book.objects.all()
+            return render(
+                request,
+                'modifybook.html',
+                context={'books':books},
+            )
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def addBook(request):
-    if(request.method == 'GET'):
-        return render(
-            request,
-            'addbook.html',
-            context={}
-        )
-    elif(request.method == 'POST'):
-        book = Book.objects.create(
-            title=request.POST.get('title'),
-            author=request.POST.get('author'),
-            publisher=request.POST.get('publisher'),
-            publication_year=request.POST.get('publication_year'),
-            isbn=request.POST.get('isbn'),
-            reserved=False,
+    if(request.user.is_authenticated and request.user.is_manager):
+        if(request.method == 'GET'):
+            return render(
+                request,
+                'addbook.html',
+                context={}
             )
-        book.save()
+        elif(request.method == 'POST'):
+            book = Book.objects.create(
+                title=request.POST.get('title'),
+                author=request.POST.get('author'),
+                publisher=request.POST.get('publisher'),
+                publication_year=request.POST.get('publication_year'),
+                isbn=request.POST.get('isbn'),
+                reserved=False,
+                )
+            return render(
+                request,
+                'addbook.html',
+                context={}
+            )
+    else:
         return render(
-            request,
-            'addbook.html',
-            context={}
+        request,
+        'denied.html',
+        context={},
         )
+
 
 def borrowBook(request):
     return None
@@ -89,10 +129,50 @@ def deleteBook(request):
     return None
 
 def createManager(request):
-    return None
+    if(request.user.is_authenticated and request.user.is_administrator):
+        if(request.method == 'GET'):
+            return render(
+                request,
+                'create_manager.html',
+                context={}
+            )
+        elif(request.method == 'POST'):
+            user = User(
+                firstname=request.POST.get('firstname'),
+                lastname=request.POST.get('lastname'),
+                email=request.POST.get('email'),
+                idnum=request.POST.get('idnum'),
+                username=request.POST.get('username'),
+                is_manager=True,
+            )
+            user.set_password(request.POST.get('password1'))
+            user.save()
+            return render(
+                request,
+                'create_manager.html',
+                context={}
+            )
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def logs(request):
-    return None
+    if(request.user.is_authenticated and request.user.is_administrator):
+        logs = ActivityLog.objects.all()
+        return render(
+        request,
+        'logs.html',
+        context={'logs':logs},
+        )
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 # from django.views import generic
 
 

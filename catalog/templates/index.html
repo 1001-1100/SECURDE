@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
+
+{% load account %}
 
 {% block content %}
 
@@ -11,12 +13,24 @@
   </div>
 
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    {% if account_type == None %}
-      <h1 class="h3 mb-0 text-gray-800">You are not logged in.</h1> 
+    {% if user.is_authenticated  %}
+      <h1 class="h3 mb-0 text-gray-800">You are logged in as a {% user_display user %}!</h1>
+      </div>
+      <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Account type is 
+      {% if user.is_manager %}
+        Book Manager
+      {% elif user.is_administrator %}
+        Administrator
+      {% else %}
+        Student/Teacher
+      {% endif %}
+      .</h1>
+      </div>
     {% else %}
-      <h1 class="h3 mb-0 text-gray-800">You are logged in as a {{account_type}}!</h1>
+      <h1 class="h3 mb-0 text-gray-800">You are not logged in.</h1> 
+      </div>
     {% endif %}
-  </div>
 
 </div>
 <!-- /.container-fluid -->

@@ -7,7 +7,11 @@ from django.urls import reverse  # To generate URLS by reversing URL patterns
 import uuid  # Required for unique book instances
 from datetime import date
 
-from django.contrib.auth.models import User  # Required to assign User as a borrower
+# from django.contrib.auth.models import User  # Required to assign User as a borrower
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+
+from activity_log.models import UserMixin
 
 class Review(models.Model):
     content = models.TextField()
@@ -15,8 +19,6 @@ class Review(models.Model):
 class Book(models.Model):
     title = models.CharField(max_length=200)
     author = models.TextField(max_length=200)
-    # Foreign Key used because book can only have one author, but authors can have multiple books
-    # Author as a string rather than object because it hasn't been declared yet in file.
     publisher = models.CharField(max_length=200)
     publication_year = models.IntegerField()
     isbn = models.CharField('ISBN', max_length=13,
@@ -27,6 +29,66 @@ class Book(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.title
+
+from django.contrib.auth.base_user import BaseUserManager
+
+class UserManager(BaseUserManager):
+
+    use_in_migrations = True
+
+    def create_user(self, username, password=None):
+        user = self.model(
+            username=username,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    # def create_staffuser(self, email, password=None):
+    #     user = self.model(
+    #         email=self.normalize_email(email),
+    #         is_staff=True,
+    #     )
+    #     user.set_password(password)
+    #     user.save(using=self._db)
+    #     return user
+
+    def create_superuser(self, username, password):
+        user = self.create_user(
+            username,
+            password
+        )
+        user.is_administrator = True
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin, UserMixin):
+    username = models.CharField(max_length=100,unique=True) 
+    email = models.EmailField()
+    idnum = models.CharField(max_length=100)
+    firstname = models.CharField(max_length=100)
+    lastname = models.CharField(max_length=100)
+    is_manager = models.BooleanField(default=False)
+    is_administrator = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    # REQUIRED_FIELDS = ['firstname', 'lastname', 'email', 'idnum']
+
+    class Meta:
+        # ordering = ['id_num','last_name']
+        verbose_name = ('user')
+        verbose_name_plural = ('users')
+
+    def __str__(self):              
+        return self.username
 
 # class Author(models.Model):
 #     """Model representing an author."""

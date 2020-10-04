@@ -39,7 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
+    'activity_log',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     # Add our new application 
     'catalog.apps.CatalogConfig', #This object was created for us in /catalog/apps.py
 ]
@@ -53,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'activity_log.middleware.ActivityLogMiddleware',
 ]
 
 ROOT_URLCONF = 'locallibrary.urls'
@@ -105,6 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'catalog.User'
+ACCOUNT_SIGNUP_FORM_CLASS = 'catalog.forms.SignupForm'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -127,7 +135,13 @@ LOGIN_REDIRECT_URL = '/'
 # Add to test email:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
 
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Heroku: Update database configuration from $DATABASE_URL.
 import dj_database_url
@@ -147,3 +161,5 @@ STATIC_URL = '/static/'
 # Static file serving.
 # http://whitenoise.evans.io/en/stable/django.html#django-middleware
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+SITE_ID = 1

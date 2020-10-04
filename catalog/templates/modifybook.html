@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
 
 {% block content %}
 
@@ -42,8 +42,10 @@
                         <td>Available</td>
                       {% endif %}
                       <td>
-                      <input type="button">Edit<input/>
-                      <input type="button">Delete<input/>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Edit</a>
+                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Delete</a>
+                      {% comment %} <input type="button">Edit<input/>
+                      <input type="button">Delete<input/> {% endcomment %}
                       </td>
                     </tr>
                     {% endfor %}

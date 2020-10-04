@@ -1,4 +1,6 @@
-{% extends "base.html" %}
+{% extends "base_page.html" %}
+
+{% load account %}
 
 {% block content %}
 
@@ -43,7 +45,9 @@
                       {% endif %}
                       <td>
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Check Reviews</a>
+                        {% if user.is_authenticated %}
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Leave Review</a>
+                        {% endif %}
                       </td>
                     </tr>
                     {% endfor %}

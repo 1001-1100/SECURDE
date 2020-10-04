@@ -24,8 +24,30 @@
 
     <!-- Heading -->
     <div class="sidebar-heading">
-    Explore
+    Menu
     </div>
+    {% if user.is_authenticated  %}
+
+    {% if user.is_manager %}
+    <li class="nav-item">
+    <a class="nav-link" href="/addbook">
+        <span>Add Book</span></a>
+    </li>
+
+    <li class="nav-item">
+    <a class="nav-link" href="/modifybook">
+        <span>Modify Book</span></a>
+    </li>
+    {% elif user.is_administrator %}
+    <li class="nav-item">
+    <a class="nav-link" href="/createmanager">
+        <span>Create Manager</span></a>
+    </li>
+    <li class="nav-item">
+    <a class="nav-link" href="/logs">
+        <span>View System Logs</span></a>
+    </li>
+    {% else %}
 
     <!-- Nav Item -->
     <li class="nav-item">
@@ -35,20 +57,22 @@
 
     <!-- Nav Item -->
     <li class="nav-item">
-    <a class="nav-link" href="/addbook">
-        <span>Add Book</span></a>
-    </li>
-
-    <li class="nav-item">
-    <a class="nav-link" href="/books">
-        <span>Modify Book</span></a>
-    </li>
-
-    <!-- Nav Item -->
-    <li class="nav-item">
     <a class="nav-link" href="/profile">
         <span>Profile Page</span></a>
     </li>
+
+    {% endif %}
+
+    {% else %}
+
+    <!-- Nav Item -->
+    <li class="nav-item">
+    <a class="nav-link" href="/books">
+        <span>Browse Books</span></a>
+    </li>
+
+    {% endif %}
+
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

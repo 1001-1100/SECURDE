@@ -4,6 +4,24 @@ import datetime  # for checking renewal date range.
 
 from django import forms
 
+class SignupForm(forms.Form):
+    firstname = forms.CharField(max_length=254, label='First Name')
+    lastname = forms.CharField(max_length=254, label='Last Name')
+    idnum = forms.CharField(max_length=254, label='ID Number')
+    password1 = forms.CharField(max_length=254, label='Password1', widget=forms.PasswordInput)
+    password2 = forms.CharField(max_length=254, label='Password2', widget=forms.PasswordInput)
+
+    def signup(self, request, user):
+        user.firstname = self.cleaned_data['firstname']
+        user.lastname = self.cleaned_data['lastname']
+        user.idnum = self.cleaned_data['idnum']
+        print(request.user)
+        print(request.user.is_authenticated)
+        if(request.user.is_authenticated):
+            print(request.user.is_administrator)
+            if(request.user.is_administrator):
+                user.is_manager = True
+        user.save()
 
 class RenewBookForm(forms.Form):
     """Form for a librarian to renew books."""
