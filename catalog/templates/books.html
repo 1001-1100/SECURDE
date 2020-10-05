@@ -27,11 +27,13 @@
                       <th>Year of Publication</th>
                       <th>ISBN</th>
                       <th>Status</th>
+                      <th>Copies</th>
                       <th>Reviews</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for book in books %}
+                    {% csrf_token %}
                     <tr>
                       <td>{{ book.title }}</td>
                       <td>{{ book.author }}</td>
@@ -43,10 +45,41 @@
                       {% else %}
                         <td>Available</td>
                       {% endif %}
+                      <td>{{ book.instances }}</td>
                       <td>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Check Reviews</a>
+                        <a href="/reviews?book={{book.id}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Check Reviews</a>
                         {% if user.is_authenticated %}
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Leave Review</a>
+                        <button type="button" data-toggle="modal" data-target="#exampleModalCenter" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Leave Review</button>
+                        <!-- Modal -->
+                        <div class="modal" id="exampleModalCenter" tabindex="-1" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Leave Review</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <form method="post" action="/addbookreview">
+                              {% csrf_token %}
+                              <div class="modal-body">
+                                <input name="id" value={{book.id}} type="hidden">
+                                <p>Leave review for: <strong>{{book.title}}</strong></p>
+                                <input name="content" type="text">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                              </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        <form method="post" action="/borrowbook">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{book.id}}>
+                        <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Borrow Book</a>
+                        </form>
                         {% endif %}
                       </td>
                     </tr>

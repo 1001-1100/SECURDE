@@ -13,22 +13,23 @@ from django.contrib.auth.models import PermissionsMixin
 
 from activity_log.models import UserMixin
 
-class Review(models.Model):
-    content = models.TextField()
-
 class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.TextField(max_length=200)
-    publisher = models.CharField(max_length=200)
-    publication_year = models.IntegerField()
+    title = models.CharField(max_length=200,default='Untitled')
+    author = models.CharField(max_length=200,default='Unknown')
+    publisher = models.CharField(max_length=200,default='Unknown')
+    publication_year = models.IntegerField(default=0)
     isbn = models.CharField('ISBN', max_length=13,
                             help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn'
-                                      '">ISBN number</a>')
+                                      '">ISBN number</a>', default=0)
+    instances = models.IntegerField(default=1)
+    borrowed = models.IntegerField(default=0)
     reserved = models.BooleanField(default=False)
 
     def __str__(self):
         """String for representing the Model object."""
         return self.title
+
+
 
 from django.contrib.auth.base_user import BaseUserManager
 
@@ -71,6 +72,7 @@ class User(AbstractBaseUser, PermissionsMixin, UserMixin):
     idnum = models.CharField(max_length=100)
     firstname = models.CharField(max_length=100)
     lastname = models.CharField(max_length=100)
+    borrowed_books = models.ManyToManyField(Book)
     is_manager = models.BooleanField(default=False)
     is_administrator = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -90,6 +92,10 @@ class User(AbstractBaseUser, PermissionsMixin, UserMixin):
     def __str__(self):              
         return self.username
 
+class Review(models.Model):
+    content = models.TextField()
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 # class Author(models.Model):
 #     """Model representing an author."""
 #     first_name = models.CharField(max_length=100)

@@ -9,12 +9,12 @@
 
           <!-- Page Heading -->
           <h1 class="h3 mb-2 text-gray-800">User Profile</h1>
-          <p class="mb-4">Here you can find your user profile.</p>
+          <p class="mb-4">Here you can find your profile details, reviews you left, and borrowed books.</p>
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">
-              <!-- <h6 class="m-0 font-weight-bold text-primary"></h6> -->
+              <h6 class="m-0 font-weight-bold text-primary">Details</h6> 
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -31,6 +31,12 @@
                     <tr>
                       <td><strong>Username</strong></td>
                       <td>{{ user.username }}</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Password</strong></td>
+                      <td>
+                        <a href="/accounts/password/change" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Change Password</a>
+                      </td>
                     </tr>
                     <tr>
                       <td><strong>Email</strong></td>
@@ -52,11 +58,76 @@
                       {% endif %}
                       </td>
                     </tr>
+                    <tr>
+                      <td><strong>ID Number</strong></td>
+                      <td>{{ user.idnum }}</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
             </div>
           </div>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Reviews Left</h6> 
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Book Title</th>
+                      <th>Review</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for review in reviews %}
+                    <tr>
+                      <td>{{ review.book.title }}</td>
+                      <td>{{ review.content }}</td>
+                    </tr>
+                  {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Borrowed Books</h6> 
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Title</th>
+                      <th>Author</th>
+                      <th>Publisher</th>
+                      <th>Year of Publication</th>
+                      <th>ISBN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for book in books %}
+                    <tr>
+                      <td>{{ book.title }}</td>
+                      <td>{{ book.author }}</td>
+                      <td>{{ book.publisher }}</td>
+                      <td>{{ book.publication_year }}</td>
+                      <td>{{ book.isbn }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
 
         </div>
         <!-- /.container-fluid -->

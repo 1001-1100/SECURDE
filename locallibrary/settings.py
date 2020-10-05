@@ -163,3 +163,6 @@ STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 SITE_ID = 1
+
+SESSION_COOKIE_AGE = 120
+SESSION_SAVE_EVERY_REQUEST = True

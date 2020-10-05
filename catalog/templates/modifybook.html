@@ -24,26 +24,48 @@
                       <th>Publisher</th>
                       <th>Year of Publication</th>
                       <th>ISBN</th>
+                      <th>Copies</th>
+                      <th>Borrowed</th>
                       <th>Status</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {% for book in books %}
+                    <form method="post" action="/editbook">
+                    {% csrf_token %}
+                    <input type="hidden" name="id" value={{book.id}}>
                     <tr>
-                      <td>{{ book.title }}</td>
-                      <td>{{ book.author }}</td>
-                      <td>{{ book.publisher }}</td>
-                      <td>{{ book.publication_year }}</td>
-                      <td>{{ book.isbn }}</td>
+                      <td><input value="{{ book.title }}" name="title"></td>
+                      <td><input value="{{ book.author }}" name="author"></td>
+                      <td><input value="{{ book.publisher }}" name="publisher"></td>
+                      <td><input value="{{ book.publication_year }}" name="publication_year"></td>
+                      <td><input value="{{ book.isbn }}" name="isbn"></td>
+                      <td>{{ book.instances }}</td>
+                      <td>{{ book.borrowed }}</td>
                       {% if book.reserved %}
                         <td>Reserved</td>
                       {% else %}
                         <td>Available</td>
                       {% endif %}
                       <td>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Edit</a>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">Delete</a>
+                        <button type="submit" class="mx-1 btn btn-sm btn-primary shadow-sm">Edit</a>
+                        </form>
+                        <form method="post" action="/deletebook">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{book.id}}>
+                        <button type="submit" class="mx-1 btn btn-sm btn-primary shadow-sm">Delete</a>
+                        </form>
+                        <form method="post" action="/addinstance">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{book.id}}>
+                        <button type="submit" class="mx-1 btn btn-sm btn-primary shadow-sm">Add Copy</a>
+                        </form>
+                        <form method="post" action="/removeinstance">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value={{book.id}}>
+                        <button type="submit" class="mx-1 btn btn-sm btn-primary shadow-sm">Remove Copy</a>
+                        </form>
                       {% comment %} <input type="button">Edit<input/>
                       <input type="button">Delete<input/> {% endcomment %}
                       </td>

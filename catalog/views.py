@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 
-from .models import Book, User 
+from .models import Book, User, Review
 from activity_log.models import ActivityLog 
 
 def index(request):
@@ -35,10 +35,16 @@ def register(request):
 
 def profile(request):
     if(request.user.is_authenticated):
+        user = User.objects.get(
+            id=request.user.id
+        )
+        reviews = Review.objects.filter(
+            user=user
+        )
         return render(
             request,
             'profile.html',
-            context={},
+            context={'reviews':reviews, 'books':user.borrowed_books.all()},
         )
     else:
         return render(
@@ -70,6 +76,23 @@ def books(request):
             context={'books':books},
         )
 
+def reviews(request):
+    bookid = request.GET.get('book','')
+    if(bookid == '' or (request.user.is_authenticated and (request.user.is_manager or request.user.is_administrator)) ):
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
+    else:
+        book = Book.objects.get(id=bookid)
+        reviews = Review.objects.filter(book=book)
+        return render(
+            request,
+            'reviews.html',
+            context={'reviews':reviews,'book':book},
+        )
+
 def modifyBook(request):
     if(request.user.is_authenticated and request.user.is_manager):
         if(request.method == 'GET'):
@@ -95,6 +118,14 @@ def addBook(request):
                 context={}
             )
         elif(request.method == 'POST'):
+            for key in request.POST:
+                print(request.POST.get(key))
+                if(request.POST[key].strip() == ''):
+                    return render(
+                        request,
+                        'error.html',
+                        context={'error':'Empty values found.'}
+                    )
             book = Book.objects.create(
                 title=request.POST.get('title'),
                 author=request.POST.get('author'),
@@ -117,16 +148,128 @@ def addBook(request):
 
 
 def borrowBook(request):
-    return None
+    if(request.user.is_authenticated):
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        user = User.objects.get(
+            id=request.user.id
+        )
+        if(not book.reserved):
+            user.borrowed_books.add(book)
+            book.borrowed += 1
+            if(book.instances == book.borrowed):
+                book.reserved = True
+            book.save()
+            user.save()
+        return redirect('/books') 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def addBookReview(request):
-    return None
+    if(request.user.is_authenticated):
+        for key in request.POST:
+            if(request.POST[key].strip() == ''):
+                return render(
+                    request,
+                    'error.html',
+                    context={'error':'Empty values found.'}
+                )
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        review = Review.objects.create(
+            book=book,
+            content=request.POST.get('content'),
+            user=request.user,
+        )
+        review.save()
+        return redirect('/reviews?book='+request.POST.get('id')) 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def editBook(request):
-    return None
+    if(request.user.is_authenticated and request.user.is_manager):
+        for key in request.POST:
+            if(request.POST[key].strip() == ''):
+                return render(
+                    request,
+                    'error.html',
+                    context={'error':'Empty values found.'}
+                )
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        book.title = request.POST.get('title')
+        book.author = request.POST.get('author')
+        book.publisher = request.POST.get('publisher')
+        book.publication_year = request.POST.get('publication_year')
+        book.isbn = request.POST.get('isbn')
+        book.save()
+        return redirect('/modifybook') 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
+
+def addInstance(request):
+    if(request.user.is_authenticated and request.user.is_manager):
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        book.instances += 1
+        if(book.instances > book.borrowed):
+            book.reserved = False
+        book.save()
+        return redirect('/modifybook') 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
+
+def removeInstance(request):
+    if(request.user.is_authenticated and request.user.is_manager):
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        if(book.instances > 1 and book.borrowed < book.instances):
+            book.instances -= 1
+        if(book.instances == book.borrowed):
+            book.reserved = True
+        book.save()
+        return redirect('/modifybook') 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def deleteBook(request):
-    return None
+    if(request.user.is_authenticated and request.user.is_manager):
+        book = Book.objects.get(
+            id=request.POST.get('id'),
+            )
+        book.delete()
+        return redirect('/modifybook') 
+    else:
+        return render(
+        request,
+        'denied.html',
+        context={},
+        )
 
 def createManager(request):
     if(request.user.is_authenticated and request.user.is_administrator):
@@ -137,6 +280,13 @@ def createManager(request):
                 context={}
             )
         elif(request.method == 'POST'):
+            for key in request.POST:
+                if(request.POST[key].strip() == ''):
+                    return render(
+                        request,
+                        'error.html',
+                        context={'error':'Empty values found.'}
+                    )
             user = User(
                 firstname=request.POST.get('firstname'),
                 lastname=request.POST.get('lastname'),

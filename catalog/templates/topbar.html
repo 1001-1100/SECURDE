@@ -1,3 +1,5 @@
+{% load account %}
+
 <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
@@ -10,31 +12,12 @@
     <ul class="navbar-nav ml-auto">
 
     <!-- Nav Item - User Information -->
-    {% if user.is_authenticated  %}
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link" role="button" href="/profile">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{user}}</span>
-            </a>
-        </li>
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link" role="button">
-                <form method="post" action="/accounts/logout/">
-                {% csrf_token %}
-                <button type="submit" class="mr-2 d-none d-lg-inline text-gray-600 small">Logout</button>
-                </form>
-            </a>
-        </li>
-    {% else %}
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link" role="button" href="/login">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Login</span>
-            </a>
-        </li>
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link" role="button" href="/register">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Register</span>
-            </a>
-        </li>
+    {% if user.is_authenticated %}
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link" role="button" href="/profile">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">{% user_display user %}</span>
+        </a>
+    </li>
     {% endif %}
 
     </ul>
